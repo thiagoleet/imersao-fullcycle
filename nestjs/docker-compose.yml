@@ -5,19 +5,34 @@ services:
     build: .
     ports: 
       - "3000:3000"
+      - 5555:5555
     volumes:
       - .:/home/node/app
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
   
+  #db:
+  #  image: bitnami/mongodb:latest
+  #  volumes:
+  #    - mongodb_data:/bitnami/mongodb
+  #  environment:
+  #    MONGODB_ROOT_PASSWORD: root
+  #    MONGODB_REPLICA_SET_MODE: primary
+  #    MONGODB_REPLICA_SET_KEY: 123456
+  #    MONGODB_DATABASE: nest
+
   db:
-    image: bitnami/mongodb:latest
-    volumes:
-      - mongodb_data:/bitnami/mongodb
+    build: ./.docker/mongo
     environment:
-      MONGODB_ROOT_PASSWORD: root
-      MONGODB_REPLICA_SET_MODE: primary
-      MONGODB_REPLICA_SET_KEY: 123456
-      MONGODB_DATABASE: nest
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_REPLICA_HOST: db
+    volumes:
+    - mongodb_data:/data/db
 
 volumes:
   mongodb_data:
     driver: local
+
+networks:
+  my-network:
+    external: true
