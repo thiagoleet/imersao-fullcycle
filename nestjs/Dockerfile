@@ -1,4 +1,4 @@
-FROM node:20-slim
+FROM arm64v8/node
 
 WORKDIR /home/node/app
 

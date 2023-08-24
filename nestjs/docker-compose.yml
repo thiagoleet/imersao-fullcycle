@@ -9,7 +9,7 @@ services:
       - .:/home/node/app
   
   db:
-    image: bitnami/mongodb:5.0.17
+    image: bitnami/mongodb:latest
     volumes:
       - mongodb_data:/bitnami/mongodb
     environment:
