@@ -24,8 +24,7 @@ function DriverPage() {
   );
 
   useEffect(() => {
-    socket.connect();
-    socket.emit("message");
+    socket.connect();    
 
     return () => {
       socket.disconnect();
@@ -59,12 +58,23 @@ function DriverPage() {
 
     const { steps } = route.directions.routes[0].legs[0];
 
+    // Movimentação do carro no mapa
     for (const step of steps) {
       await sleep(2000);
       map?.moveCar(routeId, step.start_location);
+      socket.emit("new-points", {
+        route_id: routeId,
+        lat: step.start_location.lat,
+        lng: step.start_location.lng,
+      });
 
       await sleep(2000);
       map?.moveCar(routeId, step.end_location);
+      socket.emit("new-points", {
+        route_id: routeId,
+        lat: step.end_location.lat,
+        lng: step.end_location.lng,
+      });
     }
   }
 
@@ -107,6 +117,6 @@ function DriverPage() {
   );
 }
 
-export default DriverPage;
-
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export default DriverPage;

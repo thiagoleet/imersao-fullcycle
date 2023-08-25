@@ -1,4 +1,6 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { Socket } from 'socket.io';
+import { RoutesDriverService } from '../routes-driver/routes-driver.service';
 
 @WebSocketGateway({
   cors: {
@@ -6,9 +8,19 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
   },
 })
 export class RoutesGateway {
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
-    console.log('handle message');
-    return 'Hello world!';
+  constructor(private routesDriverService: RoutesDriverService) {}
+
+  @SubscribeMessage('new-points')
+  async handleMessage(
+    client: Socket,
+    payload: {
+      route_id: string;
+      lat: number;
+      lng: number;
+    },
+  ) {
+    // await this.routesDriverService.createOrUpdate(payload);
+    client.broadcast.emit('admin-new-points', payload); // notifica os admins
+    client.broadcast.emit(`new-points/${payload.route_id}`, payload); // notifica quem tem permissão da rota
   }
 }
