@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/home/node/app
     extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - "host.docker.internal:host-gateway"
 
   db:
     #image: bitnami/mongodb:latest
@@ -35,10 +35,13 @@ services:
   #  volumes:
   #    - mongodb_data:/data/db
 
+  redis:
+    image: arm64v8/redis:alpine  
+
 volumes:
   mongodb_data:
     driver: local
 
-networks:
-  my-network:
-    external: true
+#networks:
+#  my-network:
+#    external: true
