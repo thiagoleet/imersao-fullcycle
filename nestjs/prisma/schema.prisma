@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = "darwin-arm64"
 }
 
 datasource db {
@@ -26,7 +27,7 @@ model Route {
 model RouteDriver {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   route      Route    @relation(fields: [route_id], references: [id])
-  route_id   String   @db.ObjectId @unique
+  route_id   String   @unique @db.ObjectId
   points     Point[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
