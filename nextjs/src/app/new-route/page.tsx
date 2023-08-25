@@ -61,10 +61,8 @@ function NewRoutePage() {
     ).value;
 
     const [sourceResponse, destinationResponse] = await Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_NEXT_API_URL}/places?text=${source}`),
-      fetch(
-        `${process.env.NEXT_PUBLIC_NEXT_API_URL}/places?text=${destination}`
-      ),
+      fetch(`/api/places?text=${source}`),
+      fetch(`/api/places?text=${destination}`),
     ]);
 
     const [sourcePlace, destinationPlace]: FindPlaceFromTextResponseData[] =
@@ -86,7 +84,7 @@ function NewRoutePage() {
     const placeDestinationId = destinationPlace.candidates[0].place_id;
 
     const directionsResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_NEXT_API_URL}/directions?originId=${placeSourceId}&destinationId=${placeDestinationId}`
+      `/api/directions?originId=${placeSourceId}&destinationId=${placeDestinationId}`
     );
 
     const directionsData: DirectionsResponseData & { request: any } =
