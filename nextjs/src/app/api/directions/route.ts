@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   const originId = url.searchParams.get("originId");
   const destinationId = url.searchParams.get("destinationId");
 
-  const apiURL = new URL("http://localhost:3000/directions");
+  const apiURL = new URL(`${process.env.NEXT_PUBLIC_NEST_API_URL}/directions`);
   apiURL.searchParams.set("originId", originId!);
   apiURL.searchParams.set("destinationId", destinationId!);
 

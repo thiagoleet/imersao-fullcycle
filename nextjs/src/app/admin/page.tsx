@@ -18,7 +18,7 @@ function AdminPage() {
         if (!map?.hasRoute(data.route_id)) {
           // criar rota
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_NEXT_API_URL}/routes/${data.route_id}`
+            `/api/routes/${data.route_id}`
           );
           const route: Route = await response.json();
           map?.removeRoute(data.route_id);

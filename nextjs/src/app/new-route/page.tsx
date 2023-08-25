@@ -33,20 +33,17 @@ function NewRoutePage() {
   async function createRoute() {
     const startAddress = directionsData!.routes[0].legs[0].start_address;
     const endAddress = directionsData!.routes[0].legs[0].end_address;
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_NEXT_API_URL}/routes`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: `${startAddress} - ${endAddress}`,
-          source_id: directionsData!.request.origin.place_id,
-          destination_id: directionsData!.request.destination.place_id,
-        }),
-      }
-    );
+    const response = await fetch(`/api/routes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: `${startAddress} - ${endAddress}`,
+        source_id: directionsData!.request.origin.place_id,
+        destination_id: directionsData!.request.destination.place_id,
+      }),
+    });
     const route = await response.json();
     setOpen(true);
   }
