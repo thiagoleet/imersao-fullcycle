@@ -6,6 +6,7 @@ import { useMap } from "../hooks/useMap";
 import { fetcher } from "../utils/http";
 import { Route } from "../utils/models";
 import { socket } from "../utils/socket-io";
+import { Button } from "@mui/material";
 
 function DriverPage() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -24,7 +25,7 @@ function DriverPage() {
   );
 
   useEffect(() => {
-    socket.connect();    
+    socket.connect();
 
     return () => {
       socket.disconnect();
@@ -100,9 +101,7 @@ function DriverPage() {
               ))}
             </select>
           </div>
-          <button type="submit" onClick={startRoute}>
-            Iniciar a viagem
-          </button>
+          <Button onClick={startRoute}>Iniciar a viagem</Button>
         </div>
       </div>
       <div
