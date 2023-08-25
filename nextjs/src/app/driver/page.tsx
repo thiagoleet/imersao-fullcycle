@@ -1,28 +1,17 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import useSwr from "swr";
 import { useMap } from "../hooks/useMap";
-import { fetcher } from "../utils/http";
+
 import { Route } from "../utils/models";
 import { socket } from "../utils/socket-io";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import { RouteSelect } from "../components/RouteSelect";
 
 function DriverPage() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const map = useMap(mapContainerRef);
-
-  const {
-    data: routes,
-    error,
-    isLoading,
-  } = useSwr<Route[]>(
-    `${process.env.NEXT_PUBLIC_NEXT_API_URL}/routes`,
-    fetcher,
-    {
-      fallback: [],
-    }
-  );
 
   useEffect(() => {
     socket.connect();
@@ -80,39 +69,19 @@ function DriverPage() {
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      <div>
-        <h1>Minha Viagem</h1>
+    <Grid2 container sx={{ display: "flex", flex: 1 }}>
+      <Grid2 xs={4} px={2}>
+        <Typography variant="h4">Minha Viagem</Typography>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div>
-            <select id="route">
-              {isLoading && <option disabled>Carregando rotas...</option>}
-              {routes?.map((route) => (
-                <option key={route.id} value={route.id}>
-                  {route.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <Button onClick={startRoute}>Iniciar a viagem</Button>
+          <RouteSelect id="route" onChange={() => {}} />
+
+          <Button variant="contained" fullWidth onClick={startRoute}>
+            Iniciar a viagem
+          </Button>
         </div>
-      </div>
-      <div
-        id="map"
-        ref={mapContainerRef}
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-      ></div>
-    </div>
+      </Grid2>
+      <Grid2 id="map" ref={mapContainerRef} xs={8}></Grid2>
+    </Grid2>
   );
 }
 
