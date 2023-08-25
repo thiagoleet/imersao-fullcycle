@@ -3,7 +3,6 @@ import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
 import { PrismaService } from 'src/prisma/prisma/prisma.service';
 import { DirectionsService } from 'src/maps/directions/directions.service';
-import { ClientKafka } from '@nestjs/microservices';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 
@@ -12,7 +11,7 @@ export class RoutesService {
   constructor(
     private prismaService: PrismaService,
     private directionsService: DirectionsService,
-    @InjectQueue('kafka-producer') private kakfaProducerQueue: Queue
+    @InjectQueue('kafka-producer') private kafkaProducerQueue: Queue
   ) {}
 
   async create(createRouteDto: CreateRouteDto) {
@@ -55,7 +54,7 @@ export class RoutesService {
     
 
     // Coloca na fila do Redis
-    await this.kakfaProducerQueue.add({
+    await this.kafkaProducerQueue.add({
       event: 'RouteCreated',
       id: routeCreated.id,
       name: routeCreated.name,
