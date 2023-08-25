@@ -35,7 +35,7 @@ function DriverPage() {
     map?.removeAllRoutes();
 
     await map?.addRouteWithIcons({
-      routeId: "1",
+      routeId,
       startMarkerOptions: {
         position: route.directions.routes[0].legs[0].start_location,
       },
