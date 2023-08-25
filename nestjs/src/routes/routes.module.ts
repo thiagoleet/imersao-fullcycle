@@ -5,24 +5,30 @@ import { MapsModule } from 'src/maps/maps.module';
 import { RoutesDriverService } from './routes-driver/routes-driver.service';
 import { RoutesGateway } from './routes/routes.gateway';
 import { BullModule } from '@nestjs/bull';
-import { NewPointsConsumer } from './new-points.consumer';
+import { NewPointsJob } from './new-points.job';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { RouteKafkaProducerJob } from './route-kafka-producer.job';
 
 @Module({
   imports: [
     MapsModule,
-    BullModule.registerQueue({ name: 'new-points' }),
-    ClientsModule.register([
+    BullModule.registerQueue(
+      { name: 'new-points' },
+      { name: 'kafka-producer' },
+    ),
+    ClientsModule.registerAsync([
       {
         name: 'KAFKA-SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: 'nest',
-            brokers: ['host.docker.internal:9094'],
-            // brokers: ['kafka:9092'],
+        useFactory: () => ({
+          transport: Transport.KAFKA,
+          options: {
+            client: {
+              clientId: 'nest',
+              brokers: ['host.docker.internal:9094'],
+              // brokers: ['kafka:9092'],
+            },
           },
-        },
+        }),
       },
     ]),
   ],
@@ -31,7 +37,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     RoutesService,
     RoutesDriverService,
     RoutesGateway,
-    NewPointsConsumer,
+    NewPointsJob,
+    RouteKafkaProducerJob,
   ],
 })
 export class RoutesModule {}
