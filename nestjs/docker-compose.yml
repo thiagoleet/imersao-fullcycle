@@ -1,16 +1,16 @@
 version: '3'
 
 services:
-  app:
-    build: .
-    ports: 
-      - "3000:3000"
-      - 5555:5555
-    volumes:
-      - .:/home/node/app
-    extra_hosts:
-      - "host.docker.internal:172.17.0.1"
-  
+  #app:
+  #  build: .
+  #  ports:
+  #    - "3000:3000"
+  #    - 5555:5555
+  #  volumes:
+  #    - .:/home/node/app
+  #  extra_hosts:
+  #    - "host.docker.internal:172.17.0.1"
+
   #db:
   #  image: bitnami/mongodb:latest
   #  volumes:
@@ -23,11 +23,13 @@ services:
 
   db:
     build: ./.docker/mongo
+    ports:
+      - 27017:27017
     environment:
       MONGO_INITDB_ROOT_PASSWORD: root
       MONGO_REPLICA_HOST: db
     volumes:
-    - mongodb_data:/data/db
+      - mongodb_data:/data/db
 
 volumes:
   mongodb_data:
