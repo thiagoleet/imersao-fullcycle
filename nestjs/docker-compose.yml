@@ -35,6 +35,9 @@ services:
   #  volumes:
   #    - mongodb_data:/data/db
 
+  redis:
+    image: arm64v8/redis:alpine  
+
 volumes:
   mongodb_data:
     driver: local
