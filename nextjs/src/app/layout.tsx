@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 import ThemeRegistry from "./components/ThemeRegistry/ThemeRegistry";
+import { Navbar } from "./components/Navbar";
 
 export const metadata: Metadata = {
   title: "Imersão 14 - Sistema de rastreabilidade de veículos",
@@ -16,7 +17,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ThemeRegistry>{children}</ThemeRegistry>
+        <ThemeRegistry>
+          <Navbar />
+          {children}
+        </ThemeRegistry>
       </body>
     </html>
   );
