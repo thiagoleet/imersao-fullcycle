@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import useSwr from "swr";
 import { useMap } from "../hooks/useMap";
 import { fetcher } from "../utils/http";
 import { Route } from "../utils/models";
+import { socket } from "../utils/socket-io";
 
 function DriverPage() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -21,6 +22,15 @@ function DriverPage() {
       fallback: [],
     }
   );
+
+  useEffect(() => {
+    socket.connect();
+    socket.emit("message");
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   async function startRoute() {
     const routeId = (document.getElementById("route") as HTMLSelectElement)
