@@ -1,13 +1,39 @@
 "use client";
 
-import { FormEvent, useEffect, useRef } from "react";
-import type { FindPlaceFromTextResponseData } from "@googlemaps/google-maps-services-js";
-import { Loader } from "@googlemaps/js-api-loader";
+import { FormEvent, useRef, useState } from "react";
+import type {
+  DirectionsResponseData,
+  FindPlaceFromTextResponseData,
+} from "@googlemaps/google-maps-services-js";
 import { useMap } from "../hooks/useMap";
 
 function NewRoutePage() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const map = useMap(mapContainerRef);
+  const [directionsData, setDirectionsData] = useState<
+    DirectionsResponseData & { request: any }
+  >();
+
+  async function createRoute() {
+    const startAddress = directionsData!.routes[0].legs[0].start_address;
+    const endAddress = directionsData!.routes[0].legs[0].end_address;
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_NEXT_API_URL}/routes`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: `${startAddress} - ${endAddress}`,
+          source_id: directionsData!.request.origin.place_id,
+          destination_id: directionsData!.request.destination.place_id,
+        }),
+      }
+    );
+    const route = await response.json();
+    //setOpen(true);
+  }
 
   async function searchPlaces(event: FormEvent) {
     event.preventDefault();
@@ -19,8 +45,8 @@ function NewRoutePage() {
     ).value;
 
     const [sourceResponse, destinationResponse] = await Promise.all([
-      fetch(`http://localhost:3000/places?text=${source}`),
-      fetch(`http://localhost:3000/places?text=${destination}`),
+      fetch(`${process.env.NEXT_PUBLIC_NEXT_API_URL}/places?text=${source}`),
+      fetch(`${process.env.NEXT_PUBLIC_NEXT_API_URL}/places?text=${destination}`),
     ]);
 
     const [sourcePlace, destinationPlace]: FindPlaceFromTextResponseData[] =
@@ -42,12 +68,28 @@ function NewRoutePage() {
     const placeDestinationId = destinationPlace.candidates[0].place_id;
 
     const directionsResponse = await fetch(
-      `http://localhost:3000/directions?originId=${placeSourceId}&destinationId=${placeDestinationId}`
+      `${process.env.NEXT_PUBLIC_NEXT_API_URL}/directions?originId=${placeSourceId}&destinationId=${placeDestinationId}`
     );
 
-    const directionsData = await directionsResponse.json();
+    const directionsData: DirectionsResponseData & { request: any } =
+      await directionsResponse.json();
 
-    console.log("directionsData", directionsData);
+    setDirectionsData(directionsData);
+
+    map && map?.removeAllRoutes();
+
+    await map?.addRouteWithIcons({
+      routeId: "1",
+      startMarkerOptions: {
+        position: directionsData.routes[0].legs[0].start_location,
+      },
+      endMarkerOptions: {
+        position: directionsData.routes[0].legs[0].end_location,
+      },
+      carMarkerOptions: {
+        position: directionsData.routes[0].legs[0].start_location,
+      },
+    });
   }
 
   return (
@@ -73,6 +115,15 @@ function NewRoutePage() {
           </div>
           <button type="submit">Pesquisar</button>
         </form>
+        {directionsData && (
+          <ul>
+            <li>Origem: {directionsData.routes[0].legs[0].start_address}</li>
+            <li>Destino: {directionsData.routes[0].legs[0].end_address}</li>
+            <li>
+              <button onClick={createRoute}>Criar rota</button>
+            </li>
+          </ul>
+        )}
       </div>
       <div
         id="map"

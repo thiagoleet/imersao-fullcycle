@@ -1,35 +1,39 @@
 version: '3'
 
 services:
-  #app:
-  #  build: .
-  #  ports:
-  #    - "3000:3000"
-  #    - 5555:5555
-  #  volumes:
-  #    - .:/home/node/app
-  #  extra_hosts:
-  #    - "host.docker.internal:172.17.0.1"
-
-  #db:
-  #  image: bitnami/mongodb:latest
-  #  volumes:
-  #    - mongodb_data:/bitnami/mongodb
-  #  environment:
-  #    MONGODB_ROOT_PASSWORD: root
-  #    MONGODB_REPLICA_SET_MODE: primary
-  #    MONGODB_REPLICA_SET_KEY: 123456
-  #    MONGODB_DATABASE: nest
+  app:
+    build: .
+    ports:
+      - 3000:3000
+      - 5555:5555
+    volumes:
+      - .:/home/node/app
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
 
   db:
+    #image: bitnami/mongodb:latest
     build: ./.docker/mongo
     ports:
       - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_PASSWORD: root
-      MONGO_REPLICA_HOST: db
     volumes:
+      #- mongodb_data:/bitnami/mongodb
       - mongodb_data:/data/db
+    environment:
+      MONGODB_ROOT_PASSWORD: root
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_REPLICA_SET_KEY: 123456
+      MONGODB_DATABASE: nest
+
+  #db:
+  #  build: ./.docker/mongo
+  #  ports:
+  #    - 27017:27017
+  #  environment:
+  #    MONGO_INITDB_ROOT_PASSWORD: root
+  #    MONGO_REPLICA_HOST: db
+  #  volumes:
+  #    - mongodb_data:/data/db
 
 volumes:
   mongodb_data:
