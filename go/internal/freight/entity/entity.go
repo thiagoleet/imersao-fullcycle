@@ -2,6 +2,22 @@ package entity
 
 import "time"
 
+type CustomTime time.Time
+
+const layout = "2006-01-02T15:04:05"
+
+// Pega uma data no formato JSON e retorna no padrão do Go
+func (ct *CustomTime) UnmarshalJSON(b []byte) error {
+	t, err := time.Parse(layout, string(b))
+
+	if err != nil {
+		return err
+	}
+
+	*ct = CustomTime(t)
+	return nil
+}
+
 type Route struct {
 	ID           string
 	Name         string
@@ -15,7 +31,7 @@ type Route struct {
 type RouteRepository interface {
 	Create(route *Route) error
 	FindByID(id string) (*Route, error)
-	Update(route *Route)
+	Update(route *Route) error
 }
 
 func NewRoute(id, name string, distance float64) *Route {
