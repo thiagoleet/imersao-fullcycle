@@ -12,6 +12,12 @@ type Route struct {
 	FinishedAt   time.Time
 }
 
+type RouteRepository interface {
+	Create(route *Route) error
+	FindByID(id string) (*Route, error)
+	Update(route *Route)
+}
+
 func NewRoute(id, name string, distance float64) *Route {
 	return &Route{
 		ID:       id,
