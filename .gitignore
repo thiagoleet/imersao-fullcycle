@@ -1,1 +1,2 @@
 go/.docker/mysql
+go/.docker/grafana_data
